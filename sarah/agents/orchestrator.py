@@ -20,7 +20,9 @@ from dataclasses import dataclass, field
 from .researcher import Researcher
 from .analyst import Analyst
 from .reporter import Reporter
-from ..guardrails import SpendingGuardrail, Action, ApprovalRequired
+from ..guardrails import SpendingGuardrail
+from ..gates import Gatekeeper
+from ..executor import Executor, ExecutorResult
 from ..models import Opportunity
 from ..store import OpportunityStore
 
@@ -34,6 +36,7 @@ class RunResult:
     new_ids: set = field(default_factory=set)
     activity_log: list = field(default_factory=list)
     digest_path: str | None = None
+    execution: ExecutorResult | None = None
 
 
 class Orchestrator:
@@ -61,6 +64,16 @@ class Orchestrator:
             ledger_path=guard_cfg.get("approval_ledger_path", os.path.join(self.out_dir, "approvals.jsonl")),
         )
         self.store = OpportunityStore(path=os.path.join(self.out_dir, "opportunities.json"))
+
+        # The action layer: agents that actually do the legitimately-automatable work,
+        # gated only by spending and account-ban risk.
+        self.gatekeeper = Gatekeeper(self.guardrail)
+        self.executor = Executor(
+            gatekeeper=self.gatekeeper,
+            out_dir=os.path.join(self.out_dir, "work"),
+            max_auto_per_run=prefs.get("max_auto_per_run", 5),
+            context={"owner_skills": prefs.get("owner_skills", [])},
+        )
         self.log: list[str] = []
 
     def run(self) -> RunResult:
@@ -75,9 +88,12 @@ class Orchestrator:
         ranked = self.analyst.analyze(candidates)
         self.log.extend(self.analyst.log)
 
-        # 3) Enforce the spending guardrail: separate anything that costs money.
-        approval_needed = self._isolate_spend_required(ranked)
-        actionable = [o for o in ranked if o not in approval_needed]
+        # 3) Act: the executor does the legitimately-automatable work and sorts the
+        #    rest into spend-gated / refused (ban risk) / human-required. The gatekeeper
+        #    routes every spend through the SpendingGuardrail, so nothing is auto-paid.
+        execution = self.executor.run(ranked)
+        self.log.extend(execution.log)
+        approval_needed = [g.opportunity for g in execution.gated_spend]
 
         # 4) Track what's new since last run.
         new = self.store.record_all(ranked)
@@ -87,10 +103,11 @@ class Orchestrator:
 
         # 5) Report.
         digest = self.reporter.build_digest(
-            ranked=actionable,
+            ranked=ranked,
             approval_needed=approval_needed,
             new_ids=new_ids,
             date=today,
+            execution=execution,
         )
         digest_path = self._write_digest(digest, ranked, today)
 
@@ -102,28 +119,8 @@ class Orchestrator:
             new_ids=new_ids,
             activity_log=self.log,
             digest_path=digest_path,
+            execution=execution,
         )
-
-    # ---- guardrail enforcement --------------------------------------------
-
-    def _isolate_spend_required(self, ranked: list[Opportunity]) -> list[Opportunity]:
-        held: list[Opportunity] = []
-        for o in ranked:
-            if not o.requires_payment_to_start:
-                continue
-            action = Action(
-                name=f"pursue:{o.id}",
-                description=f"Start '{o.title}' on {o.source} (requires upfront payment)",
-                costs_money=True,
-                cost_known=False,  # unknown amount -> fail closed
-                metadata={"opportunity_id": o.id, "url": o.url},
-            )
-            try:
-                self.guardrail.authorize(action)
-            except ApprovalRequired as exc:
-                self.log.append(f"HELD for approval: {o.title} ({exc.reason})")
-                held.append(o)
-        return held
 
     # ---- output ------------------------------------------------------------
 

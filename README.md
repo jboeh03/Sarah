@@ -15,15 +15,20 @@ preparing account sign-ups for your review) runs without you in the loop.
 ## What this is — and what it deliberately is *not*
 
 ### What it does
-- Runs a **team of agents** (`Researcher → Analyst → Reporter`, coordinated by an
-  `Orchestrator`) that brainstorm and gather income opportunities from a curated set
-  of real, reputable platforms, plus optional live feeds.
+- Runs a **team of agents** (`Researcher → Analyst → Executor → Reporter`, coordinated
+  by an `Orchestrator`) that brainstorm and gather income opportunities from a curated
+  set of real, reputable platforms, plus optional live feeds.
 - **Vets every opportunity**: rejects scams/MLMs/pay-to-play, flags anything that
   requires spending, and honestly classifies how automatable each one is.
+- **Does the legitimately-automatable work autonomously**: an `Executor` + worker
+  agents produce real deliverables with no human input — open-source bounty solution
+  plans, complete article drafts, tailored freelance proposals — gated only by spending
+  and account-ban risk. See [`POLICY.md`](POLICY.md) for the exact boundary.
 - **Scores opportunities** by *estimated dollars-per-hour*, legitimacy, skill needed,
   and automation risk — so you chase real money, not pennies.
-- Produces a **daily digest** ranked by expected value, with a clearly separated
-  "needs your approval (costs money)" section.
+- Produces a **daily digest** ranked by expected value, with separated sections for
+  "produced autonomously," "needs your approval (costs money)," "refused (ban risk),"
+  and "needs a human."
 
 ### What it does NOT do, and why
 This system will not build or run bots that **auto-watch ads, auto-complete surveys,
@@ -87,18 +92,24 @@ sarah/
     researcher.py             # gathers opportunities (curated + live feeds)
     analyst.py                # vets + scores each opportunity
     reporter.py               # builds the ranked daily digest
+  executor.py                 # action layer: runs workers, sorts the rest
+  gates.py                    # Gatekeeper — auto / spend-gate / refuse / human
+  workers/
+    oss_bounty.py             # drafts a funded-issue solution plan
+    content.py                # drafts a complete article
+    freelance.py              # drafts a tailored proposal
   guardrails.py               # SpendingGuardrail — the "no spend without approval" rule
   vetter.py                   # scam / ToS / automation-risk classification
   models.py                   # Opportunity model + honest $/hr scoring
   store.py                    # dedupe + persistence of seen opportunities
   delivery/
-    digest.py                 # renders Markdown digest
     gmail.py                  # builds an email payload for Gmail-MCP delivery
 data/
   opportunity_sources.json    # curated, real, verifiable platforms
 config/
   settings.json               # guardrail + preferences
-tests/                        # guardrail / vetter / scoring tests (stdlib unittest)
+POLICY.md                     # explicit automate / gate / refuse boundary
+tests/                        # guardrail / vetter / scoring / gates / executor tests
 ```
 
 Pure standard library — no installs required to run.

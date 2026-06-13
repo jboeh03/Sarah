@@ -46,6 +46,7 @@ class Reporter:
         approval_needed: list[Opportunity] | None = None,
         new_ids: set | None = None,
         date: _dt.date | None = None,
+        execution=None,
     ) -> str:
         date = date or _dt.date.today()
         new_ids = new_ids or set()
@@ -54,8 +55,12 @@ class Reporter:
         lines: list[str] = []
         lines.append(f"# Sarah — Daily Income Opportunities · {date.isoformat()}")
         lines.append("")
-        lines.append(self._summary_line(ranked, approval_needed))
+        lines.append(self._summary_line(ranked, approval_needed, execution))
         lines.append("")
+
+        # What the agents actually did this run (no human input).
+        if execution is not None:
+            lines.extend(self._work_done_section(execution))
 
         # Top picks across all legitimate categories.
         top = [o for o in ranked if o.automation_risk != AutomationRisk.HIGH][:10]
@@ -120,13 +125,50 @@ class Reporter:
 
     # ---- helpers -----------------------------------------------------------
 
-    def _summary_line(self, ranked, approval_needed) -> str:
+    def _summary_line(self, ranked, approval_needed, execution=None) -> str:
         legit = [o for o in ranked if o.automation_risk != AutomationRisk.HIGH]
         best = max((o.est_hourly_usd for o in legit), default=0.0)
+        produced = len(execution.produced) if execution is not None else 0
         return (
-            f"**{len(legit)}** vetted opportunities today · best estimated rate "
-            f"**${best:,.0f}/hr** · **{len(approval_needed)}** awaiting your spend approval."
+            f"**{len(legit)}** vetted opportunities · **{produced}** deliverables produced "
+            f"autonomously this run · best estimated rate **${best:,.0f}/hr** · "
+            f"**{len(approval_needed)}** awaiting your spend approval."
         )
+
+    def _work_done_section(self, execution) -> list[str]:
+        out: list[str] = []
+        if execution.produced:
+            out.append("## ✅ Produced autonomously this run (no human input)")
+            out.append("")
+            out.append("Real work product the agents made for you — finish and cash in:")
+            out.append("")
+            for d in execution.produced:
+                out.append(f"- **{d.title}** — {d.summary}")
+                out.append(f"  - File: `{d.path}`")
+                out.append(f"  - Next step (you): {d.next_step}")
+            out.append("")
+
+        if execution.refused:
+            out.append("## 🚫 Refused — would get your account banned (not a spend issue)")
+            out.append("")
+            out.append(
+                "These were **not** automated on purpose. Automating them is ToS-violating "
+                "fraud that bans your accounts and forfeits balances — it loses money, not makes it:"
+            )
+            out.append("")
+            for g in execution.refused[:8]:
+                out.append(f"- **{g.opportunity.title}** ({g.opportunity.source}) — {g.reason}")
+            out.append("")
+
+        if execution.human_required:
+            out.append("## 🧑 Needs you (legit, but can't be faked)")
+            out.append("")
+            out.append("High-value work that requires a real human — Sarah surfaced and ranked it:")
+            out.append("")
+            for g in execution.human_required[:10]:
+                out.append(f"- **{g.opportunity.title}** ({g.opportunity.source}) — {g.reason}")
+            out.append("")
+        return out
 
     def _pay_str(self, o: Opportunity) -> str:
         if o.est_pay_usd_low == o.est_pay_usd_high:
