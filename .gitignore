@@ -1,0 +1,14 @@
+# Generated digests, ledgers, and state — regenerated on each run.
+out/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# OS
+.DS_Store

@@ -1,0 +1,40 @@
+{
+  "owner": {
+    "email": "jeffvboeh@gmail.com",
+    "timezone": "UTC"
+  },
+  "guardrails": {
+    "require_approval_for_spending": true,
+    "max_auto_spend_usd": 0.0,
+    "approval_ledger_path": "out/approvals.jsonl",
+    "blocked_categories": ["gpt_ads_surveys"],
+    "notes": "Hard rule set by owner: nothing that costs money proceeds without explicit human approval. max_auto_spend_usd=0 means zero autonomous spend."
+  },
+  "preferences": {
+    "owner_skills": ["software_engineering", "security", "writing"],
+    "min_estimated_hourly_usd": 15.0,
+    "include_not_recommended_in_digest": true,
+    "max_items_per_category": 8,
+    "categories_priority": [
+      "bug_bounty",
+      "expert_network",
+      "paid_research",
+      "freelance",
+      "open_source_bounty",
+      "content_affiliate",
+      "microtask",
+      "gpt_ads_surveys"
+    ]
+  },
+  "delivery": {
+    "channel": "gmail",
+    "digest_output_dir": "out",
+    "send_email": false,
+    "note": "send_email is false by default so nothing leaves your inbox until you opt in."
+  },
+  "live_feeds": {
+    "enabled": true,
+    "timeout_seconds": 8,
+    "note": "Live fetch is attempted but degrades gracefully to the curated dataset when the network is unavailable."
+  }
+}
