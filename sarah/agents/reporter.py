@@ -103,6 +103,13 @@ class Reporter:
                     "automation is data fraud, and pay is pennies even by hand."
                 )
                 lines.append("")
+            if cat == Category.BUG_BOUNTY:
+                lines.append(
+                    "> Rates shown are **best-case-if-you-find-a-bug**, using a geometric "
+                    "mean of the payout range. Most sessions find nothing; income is "
+                    "lumpy and skill-gated. Real upside, but not a steady wage."
+                )
+                lines.append("")
             for o in items[: self.max_items_per_category]:
                 lines.append(self._item_block(o, o.id in new_ids))
             lines.append("")

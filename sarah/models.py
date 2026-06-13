@@ -99,13 +99,26 @@ class Opportunity:
 
     # ---- derived economics -------------------------------------------------
 
+    # Pay models whose payoff is heavily right-skewed: most attempts yield little or
+    # nothing, a rare few pay big. For these, the arithmetic mean wildly overstates a
+    # realistic outcome, so we use the geometric mean as an honest central estimate.
+    _SKEWED_MODELS = {"per_bug", "bounty"}
+
     @property
     def est_pay_mid(self) -> float:
-        return (self.est_pay_usd_low + self.est_pay_usd_high) / 2.0
+        """Honest central estimate of pay per unit of work."""
+        lo, hi = self.est_pay_usd_low, self.est_pay_usd_high
+        if self.pay_model in self._SKEWED_MODELS and lo > 0 and hi > 0:
+            return math.sqrt(lo * hi)  # geometric mean for right-skewed payoffs
+        return (lo + hi) / 2.0
 
     @property
     def est_hourly_usd(self) -> float:
-        """Honest estimated dollars per hour of human effort."""
+        """Honest estimated dollars per hour of human effort.
+
+        For skewed-payoff work (bounties), this is a *best-case-if-you-succeed* rate;
+        it does not discount for the sessions that find nothing, which are common.
+        """
         minutes = max(self.est_time_minutes, 1)
         if self.pay_model == "per_hour":
             return self.est_pay_mid
