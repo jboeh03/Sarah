@@ -1,0 +1,48 @@
+name: Sarah · daily opportunities
+
+# Runs the agent team every day without any human input, then publishes the digest
+# to the run summary and as a downloadable artifact. Nothing here spends money.
+on:
+  schedule:
+    - cron: "0 13 * * *"   # 13:00 UTC daily
+  workflow_dispatch: {}      # allow manual runs
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run the daily cycle
+        run: python3 scripts/run_daily.py
+
+      - name: Verify the agent team and guardrails
+        run: python3 -m unittest discover -s tests
+
+      - name: Publish digest to the run summary
+        if: always()
+        run: |
+          if [ -f out/digest-latest.md ]; then
+            cat out/digest-latest.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No digest produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload digest + machine-readable snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-digest
+          path: |
+            out/digest-*.md
+            out/opportunities-*.json
+            out/digest-email.json
+          if-no-files-found: warn
+          retention-days: 30

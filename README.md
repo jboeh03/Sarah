@@ -110,6 +110,18 @@ python3 scripts/run_daily.py            # run the daily cycle, write digest to .
 python3 -m unittest discover -s tests   # run the test suite
 ```
 
+## Running autonomously (daily, no human input)
+
+`.github/workflows/daily-opportunities.yml` runs the full cycle every day at 13:00 UTC
+(and on-demand via "Run workflow"). Each run:
+- gathers + vets + ranks opportunities,
+- runs the test suite as a self-check,
+- renders the digest into the **Actions run summary**, and
+- uploads the digest + JSON snapshot as a **downloadable artifact** (30-day retention).
+
+No human input is needed and nothing spends money. To also land the digest in your
+inbox, see *Email / account access* below and flip `delivery.send_email` to `true`.
+
 ## Spending guardrail (your one firm rule)
 
 Any action tagged `costs_money=True` is **never executed automatically.** It is routed
