@@ -30,7 +30,9 @@ class OutreachDraft:
     to: str                 # recipient email ("" if not yet found)
     needs_contact_lookup: bool
     payload: EmailPayload
+    channel: str = "email"  # email | phone | discover
     path: str = ""
+    call_script_path: str = ""
 
 
 class OutreachWriter:
@@ -65,26 +67,44 @@ class OutreachWriter:
 
         payload = build_email_payload(body_md, to=(p.email or ""), headline=subject)
 
-        os.makedirs(os.path.join(self.out_dir, "outreach"), exist_ok=True)
-        path = os.path.join(self.out_dir, "outreach", f"{p.id}.json")
+        # Pick the immediately-actionable channel: email if we have one, otherwise a
+        # ready-to-use phone-call script (these small businesses are often phone-first).
+        if p.email:
+            channel = "email"
+        elif p.phone:
+            channel = "phone"
+        else:
+            channel = "discover"
+
+        out_sub = os.path.join(self.out_dir, "outreach")
+        os.makedirs(out_sub, exist_ok=True)
+        path = os.path.join(out_sub, f"{p.id}.json")
         with open(path, "w", encoding="utf-8") as fh:
             json.dump(
                 {**payload.to_dict(), "prospect_id": p.id, "business": p.name,
-                 "needs_contact_lookup": not bool(p.email)},
+                 "channel": channel, "needs_contact_lookup": channel == "discover"},
                 fh, indent=2,
             )
 
+        call_script_path = ""
+        if channel == "phone":
+            call_script_path = os.path.join(out_sub, f"{p.id}-call.md")
+            with open(call_script_path, "w", encoding="utf-8") as fh:
+                fh.write(self._call_script(p, finding, demo_ref))
+
         if p.outreach_stage in (OutreachStage.BUILT.value, OutreachStage.AUDITED.value, OutreachStage.NEW.value):
             p.outreach_stage = OutreachStage.DRAFTED.value
-        self.log.append(f"Drafted outreach for {p.name}" + ("" if p.email else " (email lookup needed)"))
+        self.log.append(f"Drafted outreach for {p.name} (channel: {channel})")
 
         return OutreachDraft(
             prospect_id=p.id,
             business_name=p.name,
             to=p.email or "",
-            needs_contact_lookup=not bool(p.email),
+            needs_contact_lookup=channel == "discover",
             payload=payload,
+            channel=channel,
             path=path,
+            call_script_path=call_script_path,
         )
 
     def draft_all(self, prospects: list[Prospect]) -> list[OutreachDraft]:
@@ -133,6 +153,44 @@ Best,
 ---
 {self.owner_name} · {self.mailing_address}
 You received this one-time note because your business serves the {city} area. Reply "unsubscribe" or "not interested" and I won't contact you again.
+"""
+
+    def _call_script(self, p: Prospect, finding: str, demo_ref: str) -> str:
+        """A short, friendly cold-call script for phone-first prospects (no email).
+
+        Calling a business line is legitimate B2B outreach; this is for a human to
+        deliver. No auto-dialing, no SMS.
+        """
+        city = p.locality or "your area"
+        rep = ""
+        if p.rating and (p.review_count or 0) > 0:
+            rep = f" I saw your {p.rating}★ rating — clearly people love the work."
+        return f"""# Call script — {p.name}
+**Call:** {p.phone}  ·  **Demo to reference:** {demo_ref}
+
+## Opener
+"Hi, is this the owner? My name's {self.owner_name} — I build websites for local
+{city} service businesses. I'll be quick: {finding.lower()}, so I actually went ahead
+and built {p.name} a demo site already.{rep} Mind if I text or email you the link to
+look at? No cost, no obligation."
+
+## If interested
+- Get their email/text, send the demo link ({demo_ref}).
+- "If you like it, I can have it live this week and handle the hosting and updates."
+- Mention pricing only if asked: one-time build + small monthly care plan.
+
+## If "not interested"
+- "Totally fair — I'll leave you to it. I'll text the link anyway in case it's useful,
+  then I won't bug you." (Then stop — no repeat calls.)
+
+## Voicemail (if no answer)
+"Hi, this is {self.owner_name} for {p.name}. I build sites for local {city} businesses
+and put together a quick demo for you — no charge to look. Call or text me back at
+[your number] and I'll send it over. Thanks!"
+
+---
+_Prepared by Sarah. Demo uses public business info and is clearly a proposal. Deliver
+this call yourself — the agents don't auto-dial._
 """
 
     def _polish(self, p: Prospect, finding: str, demo_ref: str) -> str:

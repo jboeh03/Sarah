@@ -60,6 +60,28 @@ class TestOutreach(unittest.TestCase):
         self.assertTrue(os.path.exists(d.path))
         self.assertEqual(p.outreach_stage, OutreachStage.DRAFTED.value)
 
+    def test_email_prospect_uses_email_channel(self):
+        d = self.writer.draft(self._prospect(email="g@example.invalid", phone="555-0100"))
+        self.assertEqual(d.channel, "email")
+        self.assertEqual(d.call_script_path, "")
+
+    def test_phone_only_prospect_gets_call_script(self):
+        d = self.writer.draft(self._prospect(email="", phone="(937) 555-0112"))
+        self.assertEqual(d.channel, "phone")
+        self.assertFalse(d.needs_contact_lookup)
+        self.assertTrue(os.path.exists(d.call_script_path))
+        with open(d.call_script_path) as fh:
+            script = fh.read()
+        self.assertIn("Call script", script)
+        self.assertIn("(937) 555-0112", script)      # real phone in the script
+        self.assertIn("not interested", script.lower())  # graceful opt-out
+
+    def test_no_contact_at_all_is_discover(self):
+        d = self.writer.draft(self._prospect(email="", phone=""))
+        self.assertEqual(d.channel, "discover")
+        self.assertTrue(d.needs_contact_lookup)
+        self.assertEqual(d.call_script_path, "")
+
 
 if __name__ == "__main__":
     unittest.main()

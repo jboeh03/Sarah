@@ -159,8 +159,13 @@ class AgencyPipeline:
         draft_by_id = {d.prospect_id: d for d in drafts}
         for a in built:
             d = draft_by_id.get(a.prospect_id)
-            lookup = " · ⚠️ needs email lookup" if (d and d.needs_contact_lookup) else ""
-            lines.append(f"- **{a.business_name}** — demo: `{a.path}` · draft: `{d.path if d else '—'}`{lookup}")
+            if d and d.channel == "email":
+                action = f"email draft `{d.path}`"
+            elif d and d.channel == "phone":
+                action = f"📞 call script `{d.call_script_path}`"
+            else:
+                action = "⚠️ find a contact first"
+            lines.append(f"- **{a.business_name}** — demo: `{a.path}` · {action}")
         if not built:
             lines.append("_No fresh prospects to build for this run._")
 
@@ -180,8 +185,9 @@ class AgencyPipeline:
             "", "## Your next steps", "",
             "1. Open the demo sites above in a browser and skim them.",
             "2. Deploy the good ones to Vercel for live preview links (free).",
-            "3. Review the Gmail drafts, drop in the live link, and hit send.",
-            "4. For any ⚠️ email-lookup rows, find the business email (site/Maps/FB) first.",
+            "3. For email prospects: review the draft, drop in the live link, and send.",
+            "4. For 📞 phone prospects: use the call script (`*-call.md`) and call them.",
+            "5. For any ⚠️ rows: find a contact (site/Maps/FB) first, then re-run.",
             "",
             "_Demo sites use only public business info and are clearly marked proposals. "
             "Outreach drafts are CAN-SPAM-formatted; you are the sender. Nothing was sent "
