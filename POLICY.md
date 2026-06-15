@@ -47,3 +47,22 @@ risk for the owner. This is a deliberate, fixed policy.
 
 Expert-network calls, paid B2B/UX research, usability tests, and authorized bug-bounty
 testing need a real, verified human. The agents find, vet, rank, and prep — you execute.
+
+## Local web-agency pipeline (`sarah/agency/`)
+
+The Prospector → Auditor → Builder → Outreach team finds local service businesses with a
+weak online presence, builds real demo sites, and drafts outreach. Its boundary:
+
+| Outcome | Actions |
+|---|---|
+| **AUTO** | Prospect via free OpenStreetMap/seed data · audit online presence · build static demo sites locally · draft outreach emails (as drafts only). |
+| **GATE — spend** | Paid data APIs (Google Places/Yelp) · custom domains · paid hosting tiers · paid ads · real-LLM API usage. All held for approval; default paths are free. |
+| **HUMAN** | Sending the outreach · choosing what to deploy · finding a missing business email · closing the deal and collecting payment. |
+| **REFUSE** | Scraping a source in violation of its ToS · fabricating business info or reviews · presenting a demo as the business's *live* official site (impersonation) · mass non-compliant emailing · cold SMS (TCPA). |
+
+Compliance baked in: demo sites use only public business info, carry `noindex`, and are
+clearly labeled proposals. Outreach is CAN-SPAM-formatted (truthful subject, sender
+identity, postal address, opt-out) and the **owner is always the legal sender** — the
+agents only prepare a draft; a human reviews and sends. Deploying to Vercel's free tier
+costs nothing and is delegated to the orchestrating agent via MCP; the Python itself
+never deploys, sends, or spends.

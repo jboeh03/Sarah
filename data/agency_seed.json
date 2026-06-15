@@ -1,0 +1,98 @@
+{
+  "_comment": "SYNTHETIC sample businesses for offline testing only. NOT real businesses. Phone numbers use the 555-01xx range reserved for fiction; domains use .invalid (non-resolvable by RFC). Replace with live OpenStreetMap/Places data by setting your real city in config/settings.json -> agency.area and enabling live fetch.",
+  "area_placeholder": {"locality": "Maplewood", "region": "OH"},
+  "businesses": [
+    {
+      "name": "Backyard Grill Revival",
+      "niche": "grill_cleaning",
+      "locality": "Maplewood", "region": "OH",
+      "address": "12 Oak St, Maplewood, OH",
+      "phone": "(937) 555-0112", "email": "",
+      "website": "", "social": "https://facebook.com/backyardgrillrevival",
+      "rating": 4.8, "review_count": 41, "on_google_maps": true,
+      "source": "seed"
+    },
+    {
+      "name": "Crystal Clear Pool Openings",
+      "niche": "pool_service",
+      "locality": "Maplewood", "region": "OH",
+      "address": "88 Pine Ave, Maplewood, OH",
+      "phone": "(937) 555-0148", "email": "info@crystalclearpools.example.invalid",
+      "website": "http://crystalclearpools.example.invalid", "social": "",
+      "rating": 4.2, "review_count": 7, "on_google_maps": true,
+      "source": "seed"
+    },
+    {
+      "name": "PowerWash Pros",
+      "niche": "pressure_washing",
+      "locality": "Riverton", "region": "OH",
+      "address": "5 Mill Rd, Riverton, OH",
+      "phone": "(937) 555-0177", "email": "",
+      "website": "", "social": "https://facebook.com/powerwashpros937",
+      "rating": 4.6, "review_count": 23, "on_google_maps": true,
+      "source": "seed"
+    },
+    {
+      "name": "Timberline Deck Builders",
+      "niche": "deck_building",
+      "locality": "Maplewood", "region": "OH",
+      "address": "200 Cedar Ct, Maplewood, OH",
+      "phone": "(937) 555-0103", "email": "hello@timberlinedecks.example.invalid",
+      "website": "https://timberlinedecks.example.invalid", "social": "",
+      "rating": 4.9, "review_count": 64, "on_google_maps": true,
+      "source": "seed"
+    },
+    {
+      "name": "Showroom Shine Auto Detailing",
+      "niche": "detailing",
+      "locality": "Riverton", "region": "OH",
+      "address": "41 Lake Blvd, Riverton, OH",
+      "phone": "(937) 555-0190", "email": "",
+      "website": "", "social": "",
+      "rating": null, "review_count": 0, "on_google_maps": false,
+      "source": "seed"
+    },
+    {
+      "name": "GreenScape Lawn & Landscape",
+      "niche": "landscaping",
+      "locality": "Maplewood", "region": "OH",
+      "address": "7 Maple Dr, Maplewood, OH",
+      "phone": "(937) 555-0125", "email": "greenscape@example.invalid",
+      "website": "", "social": "https://facebook.com/greenscapelawn",
+      "rating": 4.7, "review_count": 52, "on_google_maps": true,
+      "source": "seed"
+    },
+    {
+      "name": "Riverside Pressure Washing",
+      "niche": "pressure_washing",
+      "locality": "Riverton", "region": "OH",
+      "address": "9 River St, Riverton, OH",
+      "phone": "(937) 555-0136", "email": "",
+      "website": "http://riversidepw.example.invalid", "social": "",
+      "rating": 4.1, "review_count": 14, "on_google_maps": true,
+      "source": "seed",
+      "_note": "website intentionally unreachable to exercise the broken-site path"
+    },
+    {
+      "name": "Aqua Season Pool Service",
+      "niche": "pool_service",
+      "locality": "Westbrook", "region": "OH",
+      "address": "63 Spring Way, Westbrook, OH",
+      "phone": "(937) 555-0159", "email": "",
+      "website": "", "social": "",
+      "rating": 4.4, "review_count": 11, "on_google_maps": false,
+      "source": "seed"
+    },
+    {
+      "name": "Smoky Joe's Grill Cleaning",
+      "niche": "grill_cleaning",
+      "locality": "Westbrook", "region": "OH",
+      "address": "17 Birch Ln, Westbrook, OH",
+      "phone": "(937) 555-0168", "email": "smokyjoe@example.invalid",
+      "website": "https://smokyjoesgrill.example.invalid", "social": "",
+      "rating": 4.3, "review_count": 19, "on_google_maps": true,
+      "source": "seed",
+      "_note": "has https site but no mobile viewport -> partial need"
+    }
+  ]
+}

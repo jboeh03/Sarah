@@ -1,0 +1,50 @@
+name: Sarah Agency · local web prospects
+
+# Runs the Prospector -> Auditor -> Builder -> Outreach pipeline on a schedule with no
+# human input: finds fresh local businesses, builds demo sites, and drafts outreach.
+# It never deploys, sends, or spends — those steps are delegated (Vercel/Gmail via MCP)
+# and stay with the owner. Demo sites + drafts + report are uploaded as artifacts.
+on:
+  schedule:
+    - cron: "0 14 * * 1"   # weekly, Mondays 14:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  prospect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run the agency pipeline
+        run: python3 scripts/run_agency.py
+
+      - name: Verify agents + guardrails
+        run: python3 -m unittest discover -s tests
+
+      - name: Publish prospect report to the run summary
+        if: always()
+        run: |
+          if [ -f out/agency/report-latest.md ]; then
+            cat out/agency/report-latest.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No prospect report produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload demo sites, drafts, and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agency-prospects
+          path: |
+            out/agency/report-*.md
+            out/agency/sites/**
+            out/agency/outreach/**
+          if-no-files-found: warn
+          retention-days: 30

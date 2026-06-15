@@ -36,5 +36,20 @@
     "enabled": true,
     "timeout_seconds": 8,
     "note": "Live fetch is attempted but degrades gracefully to the curated dataset when the network is unavailable."
+  },
+  "agency": {
+    "enabled": true,
+    "area": {"locality": "", "region": "", "radius_miles": 15},
+    "niches": ["grill_cleaning", "pool_service", "pressure_washing", "deck_building", "detailing", "landscaping"],
+    "data_source": "osm",
+    "check_websites": false,
+    "max_prospects": 25,
+    "max_sites_per_run": 5,
+    "owner_name": "",
+    "mailing_address": "",
+    "seed_path": "data/agency_seed.json",
+    "output_dir": "out/agency",
+    "deploy": {"provider": "vercel", "tier": "free", "enabled": true},
+    "note": "SET area.locality to your city (e.g. 'Dayton') for live prospecting; offline runs use the seed dataset. SET owner_name + mailing_address before sending outreach (CAN-SPAM). data_source 'google_places'/'yelp' is paid and routed through the spend gate."
   }
 }

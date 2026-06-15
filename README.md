@@ -133,6 +133,58 @@ python3 -m unittest discover -s tests   # run the test suite
 No human input is needed and nothing spends money. To also land the digest in your
 inbox, see *Email / account access* below and flip `delivery.send_email` to `true`.
 
+---
+
+## Local web-agency pipeline (`sarah/agency/`)
+
+A second team of agents that turns *"local service businesses with a weak online
+presence"* into ready-to-send proposals. It builds **real demo websites** for businesses
+that don't have one, then drafts the outreach — because pitching a finished site
+(*"I built you this — want it live?"*) converts far better than offering to build one.
+
+```
+Prospector  → finds local businesses (free OpenStreetMap, paid sources gated)
+Auditor     → scores online-presence gaps (no site? broken? few reviews? not on Maps?)
+SiteBuilder → generates a real mobile-responsive demo site from their actual data
+OutreachWriter → drafts a personalized, CAN-SPAM-compliant email (as a Gmail draft)
+```
+
+Ranking is `opportunity = need × viability`: a *great* business (proven by reviews) with
+a *weak* web presence rises to the top — the easiest, highest-value sell. Realistic
+value: **$500–$3,000 per site** plus recurring hosting/care.
+
+### Run it
+
+```bash
+python3 scripts/run_agency.py --no-live    # offline, uses the seed dataset
+python3 scripts/run_agency.py              # tries live OpenStreetMap, falls back to seed
+```
+
+Outputs land in `out/agency/`: the demo sites under `sites/<business>/index.html`, the
+outreach drafts under `outreach/<business>.json`, and a ranked `report-latest.md`.
+
+### Before a live run (one-time setup in `config/settings.json` → `agency`)
+
+- **`area.locality`** — your city/town (e.g. `"Dayton"`). Offline runs use seed data; a
+  live run needs this.
+- **`owner_name`** and **`mailing_address`** — required in outreach before sending
+  (CAN-SPAM needs a real sender identity + postal address).
+- **`data_source`** — stays `"osm"` (free). Set to `"google_places"`/`"yelp"` only if you
+  want richer data; that needs a paid key and is **held for your approval** automatically.
+
+### How deploy + send work (delegated, never autonomous)
+
+The Python builds the sites and drafts; the two outward steps are done by the
+orchestrating agent through MCP, on your say-so:
+- **Deploy**: each demo dir is published to **Vercel's free tier** for a shareable
+  preview link (free; a custom domain would cost money → gated).
+- **Send**: each draft becomes a **Gmail draft** for you to review and send — you're
+  always the sender.
+
+See [`POLICY.md`](POLICY.md) for the full AUTO / GATE / HUMAN / REFUSE boundary, including
+the compliance rules (no fabricated info, demos marked as proposals, opt-out in every
+email).
+
 ## Spending guardrail (your one firm rule)
 
 Any action tagged `costs_money=True` is **never executed automatically.** It is routed
