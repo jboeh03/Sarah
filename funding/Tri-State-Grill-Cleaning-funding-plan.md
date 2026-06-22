@@ -10,6 +10,66 @@
 
 ---
 
+## ⚡ Personalized update (pulled from your connected accounts, June 2026)
+
+Your setup is stronger than "just a sole prop." From Drive, Gmail, and Supabase I can see:
+
+- Operating as **Tri-State Grill Cleaning** *and* **Cincinnati Grill Cleaning**
+  (cincygrillcleaning.com), Cincinnati OH 45230 — owner Jeff Boeh.
+- **Business checking with Mercury** (account is under "Tri-State Grill Cleaning").
+- **Payments via PayPal Open + Venmo.** PayPal is actively emailing you to *apply for
+  funding* and is pushing Tap-to-Pay / card-reader POS.
+- A **CPA** (Wise CPC) and an active **Google Business Profile**.
+- **Multi-year history** — leads go back to 2020; the Google profile was transferred from
+  **Jason Boeh** to you (family business).
+- Setting up a **supplier account with The BBQ Depot** (dropship + custom orders) and you
+  already asked them about **supplier financing**; you're moving into higher-ticket grill
+  **sales / replacement / repair**.
+
+**That changes the answer.** Two options already sitting in your stack bypass your personal
+credit entirely — do these first:
+
+### ✅ Best option #1 — PayPal Working Capital (no credit check at all)
+- Eligibility is based **only on your PayPal sales**, not your credit. Needs a PayPal
+  **Business** account open **90+ days** and **≥ $15K/yr** in PayPal sales. Borrow up to
+  **$200K**; repay as a **% of PayPal sales**; **one fixed fee — no interest, late, or
+  prepay fees**. Applying does **not** touch your credit. ([PayPal][paypal-wc])
+- **Do now:** confirm your PayPal account is the **Business** type, route sales through it,
+  and open the funding offer PayPal already emailed you. Borrow only against a clear ROI
+  (e.g., inventory you'll resell) — the fixed fee is real money.
+
+### ✅ Best option #2 — Mercury IO card (no personal guarantee, no personal credit pull)
+- **No credit check, no personal guarantee.** Most US businesses qualify **day one**; your
+  limit is based on your **Mercury balances** (plus any external accounts you link). It
+  **reports to Experian, Equifax & D&B**, so it **builds your business credit file**.
+  ([Mercury][mercury-io])
+- **Do now:** apply for IO inside your Mercury dashboard; link external accounts to raise
+  the limit. It's a charge card (pay in full monthly), so the limit may start modest — but
+  it's a genuine no-PG card that builds business credit.
+
+### Three more levers your situation already gives you
+1. **A co-owner / guarantor (Jason Boeh).** Jason previously owned the business. If he —
+   or anyone — has decent personal credit and co-applies or personally guarantees, that
+   **unlocks normal business cards, lines, and CDFI loans** your credit currently blocks.
+   This is the single biggest unlock if it's available.
+2. **Supplier trade credit + dropship (The BBQ Depot).** You already asked about supplier
+   financing. **Net-30 terms and dropship** let you fulfill grill/parts sales with little
+   or no cash up front (customer pays, supplier ships). Ask for net terms and whether they
+   report to D&B — that's "funding" without a loan.
+3. **Customer financing to close big jobs (not a loan to you).** For grill
+   replacements/repairs, offer point-of-sale financing (**Wisetack**, **PayPal Pay
+   Later**, etc.) so the **customer** finances and **you get paid in full up front** — no
+   borrowing on your side. (That "financing makes the call easier" email is exactly this.)
+
+### ⚠️ From your inbox — be careful
+You're getting cold outreach from **funding brokers** ("Lorenzo DeMarco… 75+ lenders,
+$25K–$5M, deals from 8%"). These are typically **merchant-cash-advance brokers**; "from 8%"
+is bait — for weak personal credit the real offers come back as **high-factor MCAs**, and
+they'll want read-only access to your bank/PayPal. Exhaust PayPal WC, Mercury IO, Kiva, and
+ECDI **first**, and never sign without seeing the factor rate and total payback.
+
+---
+
 ## The honest reality check (read this first)
 
 You want one of three things: a **small line of credit**, an **unsecured business card**,
@@ -180,3 +240,5 @@ local CDFIs. No cost.
 - Ohio Dept. of Development — Ohio Micro-Loan Program (MBE/WBE): <https://development.ohio.gov/business/minority-business/financial/ohio-micro-loan-program> [oh-microloan]
 - Ohio SBDC: <https://www.ohiosbdc.net/> [oh-sbdc]
 - SCORE Greater Cincinnati & Dayton: <https://www.score.org/cincidayton> [score]
+- PayPal — Working Capital (eligibility, no credit check, % of sales): <https://www.paypal.com/us/business/financial-services/working-capital-loan> [paypal-wc]
+- Mercury — IO business credit card (no PG, no personal credit check, reports to bureaus): <https://mercury.com/credit> [mercury-io]
